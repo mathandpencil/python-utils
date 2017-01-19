@@ -30,8 +30,15 @@ class S3(object):
             name_on_s3,
         ))
 
-    def get_secure_url(self):
+    def get_secure_url(self, bucket_name, file_on_s3, expires_in=60*60):
         """ get the secure url of an object on s3."""
+        _client = boto3.client('s3',
+                        aws_access_key_id=self.aws_access_key_id,
+                        aws_secret_access_key=self.aws_secret_access_key,
+                        )
+        return _client.generate_presigned_url('get_object',
+                    Params={'Bucket': bucket_name, 'Key': file_on_s3},
+                        ExpiresIn=expires_in)
 
 if __name__ == "__main__":
     _s3 = S3(__aws_access_key_id, __aws_secret_access_key)
